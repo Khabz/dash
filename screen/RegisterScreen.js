@@ -4,10 +4,10 @@ import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { Layout, Input, Button, Text } from '@ui-kitten/components';
 import theme from '../theme.json';
 
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 
 
-const defaultAvatar = "https://www.flaticon.com/svg/vstatic/svg/1177/1177568.svg?token=exp=1617498324~hmac=6519f1263552a4393fd27622191601a9";
+const defaultAvatar = "../assets/avatar.png";
 
 const RegisterScreen = ({ navigation }) => {
     const [name, setName] = useState("");
@@ -22,15 +22,26 @@ const RegisterScreen = ({ navigation }) => {
     }, [navigation])
 
     const register = () => {
-        auth.createUserWithEmailAndPassword(email, password)
-            .then(authUser => {
-                authUser.user.updateProfile({
-                    displayName: name,
-                    photoURL: imageUrl || defaultAvatar,
-
-                })
+        try {
+            auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                var user = userCredential.user;
+                if(user) {
+                    user.updateProfile({
+                        displayName: name,
+                        photoURL: defaultAvatar
+                    }).then(function() {
+                        console.log(user)
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+                }
+            }).catch((error) => {
+                console.log(error)
             })
-            .catch((error) => alert(error.message))
+        } catch (error) {
+            console.log(error)
+        }
     }
     return (
         <Layout style={styles.container}>
@@ -44,14 +55,14 @@ const RegisterScreen = ({ navigation }) => {
                         placeholder="Display Name"
                         type="text"
                         value={name}
-                        onChangeText={(text) => setName(text)}
+                        onChangeText={(name) => setName(name)}
                     />
                     <Input
                         style={styles.input}
                         placeholder="Enter Your Email Address"
                         type="email"
                         value={email}
-                        onChangeText={(text) => setEmail(text)}
+                        onChangeText={(email) => setEmail(email)}
                     />
                     <Input
                         style={styles.input}
@@ -59,7 +70,14 @@ const RegisterScreen = ({ navigation }) => {
                         type="password"
                         secureTextEntry
                         value={password}
-                        onChangeText={(text) => setPassword(text)}
+                        onChangeText={(password) => setPassword(password)}
+                    />
+                    <Input
+                        style={styles.hiddenInput}
+                        placeholder="Profile Picture URL"
+                        type="text"
+                        value={imageUrl}
+                        onChangeText={(imageUrl) => setImageUrl(imageUrl)}
                     />
                 </View>
                 <Button
@@ -91,7 +109,11 @@ const styles = StyleSheet.create({
     },
     input: {
         marginBottom: 10
-    },  
+    },
+    hiddenInput: {
+        width: 0,
+        height: 0
+    },    
     button: {
         width: 300,
         marginTop: 10,

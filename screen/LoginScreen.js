@@ -6,8 +6,6 @@ import theme from '../theme.json';
 
 import { auth } from '../firebase';
 
-const logo = "https://www.flaticon.com/svg/vstatic/svg/1041/1041916.svg?token=exp=1617490756~hmac=f4aefd2fd44279cacc3df34ee637356f";
-
 const LoginScreen = ({ navigation }) => {
     const [ email, setEmail] = useState("");
     const [ password, setPassword ] = useState("");
@@ -19,7 +17,7 @@ const LoginScreen = ({ navigation }) => {
 
         const unsubscribe =  auth.onAuthStateChanged((authUser) => {
             if(authUser) {
-                navigation.replace("Home")
+                navigation.replace("Chats")
             }
         });
 
@@ -28,7 +26,10 @@ const LoginScreen = ({ navigation }) => {
     }, [])
     
     const signIn = () => {
-
+        auth.signInWithEmailAndPassword(email, password)
+            .catch((error) => {
+                alert(error);
+        })
     }
 
     return (
