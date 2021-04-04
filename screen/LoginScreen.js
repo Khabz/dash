@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { Button, Input, Image } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/Feather';
+import { View, Image, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { Layout, Input, Button, Text } from '@ui-kitten/components';
+import theme from '../theme.json';
+
 import { auth } from '../firebase';
 
 const logo = "https://www.flaticon.com/svg/vstatic/svg/1041/1041916.svg?token=exp=1617490756~hmac=f4aefd2fd44279cacc3df34ee637356f";
@@ -12,6 +13,10 @@ const LoginScreen = ({ navigation }) => {
     const [ password, setPassword ] = useState("");
 
     useEffect(() => {
+        navigation.setOptions({
+            headerOptions:'none'
+        });
+
         const unsubscribe =  auth.onAuthStateChanged((authUser) => {
             if(authUser) {
                 navigation.replace("Home")
@@ -27,23 +32,21 @@ const LoginScreen = ({ navigation }) => {
     }
 
     return (
-        <KeyboardAvoidingView behavior="padding" style={styles.container}>
-            <StatusBar style='light' />
-            <Image source={{
-                uri: "http://blog.mozilla.org/internetcitizen/files/2018/08/signal-logo.png"
-            }}
-            style={{ width: 200, height: 200 }}
+        <Layout style={styles.container}>
+            <StatusBar style='auto' />
+            <Image source={require("../assets/logo.png")}
+            style={{ width: 80, height: 80, marginBottom: 20, marginTop: 70 }}
             />
+            <Text style={{ marginBottom: 20, fontSize: 20 }}>Sign in to your account</Text>
             <View style={styles.inputContainer}>
                 <Input 
-                    leftIcon={{ type: 'feather', name: 'mail', color: 'grey', size: 18 }}
+                    style={{ marginBottom: 10 }}
                     placeholder="Enter your email address"
                     type="email" 
                     value={email} 
                     onChangeText={(text) => setEmail(text)} 
                 />
-                <Input 
-                    leftIcon={{ type: 'feather', name: 'lock', color: 'grey', size: 18 }}
+                <Input
                     placeholder="Enter your password" 
                     secureTextEntry 
                     type="password" 
@@ -51,10 +54,16 @@ const LoginScreen = ({ navigation }) => {
                     onChangeText={(text) => setPassword(text)} 
                 />
             </View>
-            <Button containerStyle={styles.button} onPress={signIn} title="Login" />
-            <Button containerStyle={styles.button} onPress={() => navigation.navigate('Register')} type="outline" title="Register" />
+            <Button style={styles.button} onPress={signIn} >Login</Button>
+            <View style={{ marginTop: 10 }}>
+                <Text 
+                    style={{ fontSize: 13 }}
+                >Don't have an account yet?
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: theme.success }} onPress={() => navigation.navigate('Register')}> Sign up</Text>
+                </Text>
+            </View>
             <View style={{ height: 100 }} />
-        </KeyboardAvoidingView>
+        </Layout>
     )
 }
 
@@ -63,15 +72,15 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
-        backgroundColor: 'white'
     },
     inputContainer: {
         width: 300
     },
     button: {
         width: 300,
-        marginTop: 10
+        marginTop: 10,
+        backgroundColor: theme.success,
+        borderColor: 'white'
     }
 })
 
