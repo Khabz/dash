@@ -1,28 +1,33 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native';
-import { Avatar, ListItem, Text, Divider } from '@ui-kitten/components'
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ListItem, Avatar } from 'react-native-elements';
+import { Feather } from '@expo/vector-icons';
 
-const ItemImage = (props) => {
-    return (
-        <Avatar
-            {...props}
-            size='large'
-            source={require("../assets/avatar.png")}
-        />
-    )
-}
 
-const CustomListItem = ({ id, chatName, enterChat }) => {
+
+
+const CustomListItem = ({ id, name, enterChat }) => {
     return (
-        <ListItem
-            title={evaProps => <Text {...evaProps} style={{ fontWeight: '700', paddingLeft: 8 }}>Display Name</Text>}
-            description={evaProps => <Text numberOfLines={1} ellipsizeMode="tail" {...evaProps}>This is a subtitle</Text>}
-            accessoryLeft={ItemImage}
-            ItemSeparatorComponent={Divider}
-        />
+        <TouchableOpacity activeOpacity={0.5} onPress={() => enterChat(id, name)}>
+            <ListItem key={id} bottomDivider>
+            <Avatar rounded  
+                source={require('../assets/logo.png')}
+            
+            />
+            <ListItem.Content>
+                <ListItem.Title style={{ fontWeight: "700" }}>
+                    {name}
+                </ListItem.Title>
+                <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
+                    Chatroom description
+                </ListItem.Subtitle>
+            </ListItem.Content>
+        </ListItem>
+        </TouchableOpacity>
     )
 }
 
 export default CustomListItem
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+})
